@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,8 @@ public class HttpTracingRequestFilter extends OncePerRequestFilter {
 			OidcUser oidcUser = (OidcUser) token.getPrincipal();
 			LOGGER.info("Id Token: " + oidcUser.getIdToken().getTokenValue());
 		}
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		LOGGER.info("Context Principal: " + authentication.getPrincipal());		
 		filterChain.doFilter(request, response);
 	}
 

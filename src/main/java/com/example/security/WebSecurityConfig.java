@@ -9,8 +9,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 import com.example.config.AppConfigProperties;
+import com.example.filters.HttpTracingRequestFilter;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -20,6 +22,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	AppConfigProperties config;
+	
+	@Autowired
+	HttpTracingRequestFilter filter;
 	
 	@Bean
 	OidcClientInitiatedLogoutSuccessHandler logOutHandler() {
@@ -33,14 +38,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		// @formatter:off		
-		http.authorizeRequests()
+		http.addFilterAfter(filter, FilterSecurityInterceptor.class)
+		    .authorizeRequests()		    
 		    .antMatchers("/").permitAll()
 		    .anyRequest()
 		    .authenticated()
 		    .and()
 		    .logout().logoutSuccessUrl("/")
 		    .and()
-		    .logout().logoutSuccessHandler(logOutHandler())
+		    .logout().logoutSuccessHandler(logOutHandler())		    
+		    .and()
+		    .oauth2Client()
 		    .and()
 		    .oauth2Login();
 		// @formatter:on
