@@ -1,0 +1,31 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+</head>
+
+<body>
+	<div>
+		<table>
+			<tr>
+				<td align="left"><p>OpenID Details</p></td>
+				<form th:action="@{/logout}">
+				<td align="right"><input type="submit" value="LogOut" /></td>
+				</form>
+			</tr>
+		</table>
+	</div>
+
+	<table>
+
+		<tr th:each="item : ${details}">
+			<td th:text="${item.key}">Key</td>
+			<td th:id="${'claim-' + item.key}" th:text="${item.value}">Value</td>
+		</tr>
+
+	</table>
+
+
+</body>
+
+</html>
